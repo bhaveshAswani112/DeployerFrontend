@@ -35,32 +35,46 @@ export default function Dashboard() {
     }
   }
 
-  async function setWebhhokUrl(accessToken : string | undefined,owner : string | undefined | null, repoName : string | undefined) {
-    try {
-      console.log(process.env.NEXT_PUBLIC_WEBHOOK_URL)
-      console.log(session)
-        await axios.post(`https://api.github.com/repos/${owner}/${repoName}/hooks`,{
-            name: "web",
-            active: true,
-            events: ["push"],
-            config: {
-              url: process.env.NEXT_PUBLIC_WEBHOOK_URL,
-              content_type: "application/json",
-            }
-        },{
-          headers : {
-              'Authorization': `Bearer ${accessToken}`,
-              'Accept': 'application/vnd.github+json',
-              'Content-Type': 'application/json',
-              'X-GitHub-Api-Version': '2022-11-28',
-          }
-        })
-
-        // console.log(response)
-    } catch (error) {
-      console.error("Failed to set webhook: ", error);
+  async function setWebhookUrl(accessToken: string | undefined, owner: string | undefined | null, repoName: string | undefined) {
+    // Input validation
+    if (!accessToken || !owner || !repoName) {
+        throw new Error('Missing required parameters');
     }
-  }
+
+    try {
+        const response = await axios.post(
+            `https://api.github.com/repos/${owner}/${repoName}/hooks`,
+            {
+                name: "web",
+                active: true,
+                events: ["push"],
+                config: {
+                    url: process.env.NEXT_PUBLIC_WEBHOOK_URL,
+                    content_type: "application/json",
+                    secret: process.env.WEBHOOK_SECRET || "bhavesh"
+                }
+            },
+            {
+                headers: {
+                    'Authorization': `Bearer ${accessToken}`,
+                    'Accept': 'application/vnd.github+json',
+                    'Content-Type': 'application/json',
+                    'X-GitHub-Api-Version': '2022-11-28'
+                }
+            }
+        );
+        
+        return response.data;
+    } catch (error) {
+        if (axios.isAxiosError(error)) {
+            if (error.response?.status === 404) {
+                throw new Error(`Repository ${owner}/${repoName} not found or insufficient permissions`);
+            }
+        }
+        console.log(error)
+    }
+}
+
   
   useEffect(() => {
     if (session?.user?.accessToken) {
@@ -86,11 +100,11 @@ export default function Dashboard() {
   async function deployProject(githubUrl : string, id : number, repoName : string) {
       try {
           // setRepoName(repoName)
-          // const response = await axios.post("http://localhost:4000/upload-code",{
-          //   githubUrl,
-          //   id
-          // })
-          await setWebhhokUrl(session?.user.accessToken,session?.user.name,repoName)
+          const response = await axios.post("https://uploader.vanii.ai/upload-code",{
+            githubUrl,
+            id
+          })
+          await setWebhookUrl(session?.user.accessToken,session?.user.name,repoName)
       } catch (error) {
           console.log(error)
       }
