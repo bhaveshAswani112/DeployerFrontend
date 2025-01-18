@@ -7,7 +7,7 @@ const authOptions : NextAuthOptions = {
       clientId: process.env.GITHUB_ID || "Ov23li74b0zLeFJFga73" , 
       clientSecret: process.env.GITHUB_SECRET || "acb87c1bf85188089804fd8057fe4c6b8712663d" ,
       authorization: {
-        params: { scope: "read:user user:email repo read:org admin:repo_hook"},
+        params: { scope: "read:user user:email repo read:org write:repo_hook"},
       },
     }),
   ],
