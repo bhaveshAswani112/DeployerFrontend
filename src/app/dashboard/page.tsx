@@ -27,12 +27,13 @@ export default function Dashboard() {
 
   async function setWebhhokUrl(accessToken : string | undefined,owner : string | undefined | null, repoName : string | undefined) {
     try {
+      console.log(process.env.NEXT_PUBLIC_WEBHOOK_URL)
         const response = await axios.post(`https://api.github.com/repos/${owner}/${repoName}/hooks`,{
             name: "web",
             active: true,
             events: ["push"],
             config: {
-              url: "https://deployer.vanii.ai/api/webhook",
+              url: process.env.NEXT_PUBLIC_WEBHOOK_URL,
               content_type: "application/json",
             }
         },{

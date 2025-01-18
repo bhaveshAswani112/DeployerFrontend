@@ -5,10 +5,10 @@ import { SessionStrategy } from "next-auth";
 export const authOptions = {
   providers: [
     GithubProvider({
-      clientId: process.env.GITHUB_ID || "Ov23li74b0zLeFJFga73",
-      clientSecret: process.env.GITHUB_SECRET || "acb87c1bf85188089804fd8057fe4c6b8712663d",
+      clientId: process.env.GITHUB_ID || "" , 
+      clientSecret: process.env.GITHUB_SECRET || "" ,
       authorization: {
-        params: { scope: "read:user user:email repo read:org write:repo_hook"},
+        params: { scope: "read:user user:email repo read:org admin:repo_hook"},
       },
     }),
   ],
@@ -34,6 +34,7 @@ export const authOptions = {
     },  
     async session({session,token} : {token : any, session : any}) {
       // console.log(token)
+      console.log(process.env.GITHUB_ID)
       console.log(session)
       if(token.accessToken) {
           session.user.accessToken = token.accessToken;
