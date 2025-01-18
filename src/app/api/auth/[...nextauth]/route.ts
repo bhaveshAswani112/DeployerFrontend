@@ -1,8 +1,7 @@
-import NextAuth from "next-auth"
+import NextAuth, { NextAuthOptions } from "next-auth"
 import GithubProvider from "next-auth/providers/github"
 import { SessionStrategy } from "next-auth";
-
-export const authOptions = {
+const authOptions : NextAuthOptions = {
   providers: [
     GithubProvider({
       clientId: process.env.GITHUB_ID || "" , 
@@ -19,7 +18,6 @@ export const authOptions = {
     maxAge: 24 * 60 * 60,
     strategy : "jwt" as SessionStrategy,
   },
-  redirect : "/dashboard",
   pages: {
     signIn: "/"
   },
