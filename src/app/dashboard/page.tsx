@@ -38,6 +38,7 @@ export default function Dashboard() {
   async function setWebhhokUrl(accessToken : string | undefined,owner : string | undefined | null, repoName : string | undefined) {
     try {
       console.log(process.env.NEXT_PUBLIC_WEBHOOK_URL)
+      console.log(session)
         await axios.post(`https://api.github.com/repos/${owner}/${repoName}/hooks`,{
             name: "web",
             active: true,
