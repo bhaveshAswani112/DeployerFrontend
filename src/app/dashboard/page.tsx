@@ -11,12 +11,15 @@ interface GitHubRepo {
   name: string;
   full_name: string;
   clone_url: string;
-
+  owner : {
+    login : string
+  }
 }
 
 export default function Dashboard() {
   const { data: session, status } = useSession();
   const [repos, setRepos] = useState<GitHubRepo[]>([]);
+  
   // const [repoName,setRepoName] = useState<string>("")
 
   async function fetchUserRepos(accessToken : string | undefined) {
@@ -27,7 +30,9 @@ export default function Dashboard() {
           Authorization: `Bearer ${accessToken}`,
           Accept: "application/vnd.github+json",
         },
+        
       });
+      
       return response.data;
     } catch (error) {
       console.error("Failed to fetch repositories:", error);
@@ -97,14 +102,14 @@ export default function Dashboard() {
     );
   }
 
-  async function deployProject(githubUrl : string, id : number, repoName : string) {
+  async function deployProject(githubUrl : string, id : number, repoName : string, owner : string) {
       try {
           // setRepoName(repoName)
           // const response = await axios.post("https://uploader.vanii.ai/upload-code",{
           //   githubUrl,
           //   id
           // })
-          await setWebhookUrl(session?.user.accessToken,session?.user.name,repoName)
+          await setWebhookUrl(session?.user.accessToken,owner,repoName)
       } catch (error) {
           console.log(error)
       }
@@ -120,7 +125,7 @@ export default function Dashboard() {
           <div key={repo.id}>
             <li>{repo.full_name}</li>
             <button onClick={() => {
-              deployProject(repo.clone_url,repo.id,repo.name)
+              deployProject(repo.clone_url,repo.id,repo.name,repo.owner.login)
             }}>Deploy</button>
           </div>
         ))}
