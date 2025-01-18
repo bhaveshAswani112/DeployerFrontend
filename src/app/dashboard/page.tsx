@@ -100,10 +100,10 @@ export default function Dashboard() {
   async function deployProject(githubUrl : string, id : number, repoName : string) {
       try {
           // setRepoName(repoName)
-          const response = await axios.post("https://uploader.vanii.ai/upload-code",{
-            githubUrl,
-            id
-          })
+          // const response = await axios.post("https://uploader.vanii.ai/upload-code",{
+          //   githubUrl,
+          //   id
+          // })
           await setWebhookUrl(session?.user.accessToken,session?.user.name,repoName)
       } catch (error) {
           console.log(error)
