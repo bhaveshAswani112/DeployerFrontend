@@ -3,8 +3,7 @@
 import { useSession, signIn } from "next-auth/react";
 import { useEffect, useState } from "react";
 import axios from "axios";
-
-
+import Image from "next/image";
 
 interface GitHubRepo {
   id: number;
@@ -16,8 +15,10 @@ interface GitHubRepo {
 
 export default function Dashboard() {
   const { data: session, status } = useSession();
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [repos, setRepos] = useState<GitHubRepo[]>([]);
   // const [repoName,setRepoName] = useState<string>("")
+  
 
   async function fetchUserRepos(accessToken : string | undefined) {
     if (!accessToken) return;
@@ -96,18 +97,59 @@ export default function Dashboard() {
       }
   }
 
+  const toggleModal = () => {
+    setIsModalOpen(!isModalOpen);
+  };
+
+  const logout = () => {
+    // Add your logout logic here
+    console.log("User logged out");
+    setIsModalOpen(false);
+  };
+
   return (
     <div>
-      <h1>Hello, {session.user.name}</h1>
-      <h2>Your Repositories:</h2>
+      <nav className="flex items-center justify-between mb-5 px-12 py-4 bg-purple-600 text-white">
+        <h2 className="text-lg font-bold">Your Repositories</h2>
+        <div className="flex items-center space-x-4">
+          <span className="text-lg font-bold">{session.user.name}</span>
+          <Image onClick={toggleModal} src={session?.user.image || ""} alt="Profile" className="w-10 h-10 rounded-full border border-gray-700"/>
+        </div>
+      </nav>
+      {isModalOpen && (
+        <div className="absolute right-5 top-16 bg-black bg-opacity-50 flex justify-center items-center">
+          <div className="bg-purple-200 rounded-lg w-80 p-6">
+            <h3 className="text-xl font-semibold mb-4">User Information</h3>
+            <div className="flex items-center mb-4">
+              <Image src={''} alt="Profile" className="w-12 h-12 rounded-full mr-4"/>
+              <div>
+                <p className="font-medium">{session.user.name}</p>
+                <p className="text-gray-600 text-sm">{session.user.email}</p>
+              </div>
+            </div>
+            <button
+              className="w-full bg-red-500 text-white py-2 rounded-lg hover:bg-red-600 transition-colors"
+              onClick={logout}
+            >
+              Logout
+            </button>
+            <button
+              className="w-full mt-2 bg-gray-300 text-gray-700 py-2 rounded-lg hover:bg-gray-400 transition-colors"
+              onClick={toggleModal}
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      )}
+
       <ul>
-        
         {repos.map((repo : GitHubRepo) => (
-          <div key={repo.id}>
-            <li>{repo.full_name}</li>
-            <button onClick={() => {
-              deployProject(repo.clone_url,repo.id,repo.name)
-            }}>Deploy</button>
+          <div key={repo.id} className="mx-10 my-4">
+            <div className="flex flex-row justify-between font-bold text-xl px-5 py-4 bg-purple-300 hover:bg-purple-400 rounded-lg">
+              <li>{repo.full_name}</li>
+              <button onClick={() => {deployProject(repo.clone_url,repo.id,repo.name)}} className="text-white hover:text-black hover:underline">Deploy</button>
+            </div>
           </div>
         ))}
       </ul>
