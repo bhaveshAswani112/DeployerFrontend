@@ -16,8 +16,8 @@ interface GitHubRepo {
 export default function Dashboard() {
   const { data: session, status } = useSession();
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [hovered, setHovered] = useState(false);
   const [repos, setRepos] = useState<GitHubRepo[]>([]);
-  // const [repoName,setRepoName] = useState<string>("")
   
 
   async function fetchUserRepos(accessToken : string | undefined) {
@@ -77,9 +77,11 @@ export default function Dashboard() {
 
   if (!session || !session.user) {
     return (
-      <div>
-        <h1>You are not signed in</h1>
-        <button onClick={() => signIn("github")}>Sign In with GitHub</button>
+      <div className="min-h-screen flex flex-col justify-center items-center">
+        <h1 className="py-2">You are not signed in</h1>
+        <button onClick={() => signIn("github")} className={`text-white text-xl ${hovered ? "bg-purple-700" : "bg-purple-500"} px-10 py-2 cursor-pointer rounded-lg border-none mb-5 shadow-lg transition-transform transform ${hovered ? "scale-105" : ""}`}>
+          Sign In with GitHub
+        </button>
       </div>
     );
   }

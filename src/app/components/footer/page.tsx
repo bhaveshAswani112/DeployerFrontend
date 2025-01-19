@@ -2,14 +2,14 @@ export default function Footer() {
     return (
       <footer className="w-full text-center text-white py-4 bg-purple-500">
         <p>
-          Made with 💖 by{" "}
+          Best platform to 
           <a
             href="https://yourportfolio.com"
             target="_blank"
             rel="noopener noreferrer"
-            className="text-black underline"
+            className="text-black ml-2 underline"
           >
-            Your Name
+            Deploy your Site
           </a>
         </p>
       </footer>
